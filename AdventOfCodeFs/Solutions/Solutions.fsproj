@@ -10,14 +10,20 @@
     <Compile Include="Util.fs" />
     
     <Compile Include="day1.fs" />
-    <Content Include="day1.txt" CopyToOutputDirectory="Always"/>
    
     <Compile Include="day2.fs" />
-    <Content Include="day2sample.txt" CopyToOutputDirectory="Always"/>
     
     <Compile Include="Program.fs" />
     
-    <Content Include="day2.txt">
+    <Content Include="inputs\day1.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    
+    <Content Include="inputs\day2.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    
+    <Content Include="inputs\day2sample.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

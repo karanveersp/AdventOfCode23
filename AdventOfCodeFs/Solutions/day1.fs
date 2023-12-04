@@ -1,8 +1,24 @@
 module Solutions.day1
 
 open System
+open System.Runtime.CompilerServices
 open Util
 open FSharp.Core
+
+[<Extension>]
+type StringExtensions =
+    [<Extension>]
+    static member inline Reverse(this: string) =
+        let rev = this.ToCharArray() |> Array.rev
+        String.Join("", rev)
+
+/// Adds head/tail pattern matching on strings without having to
+/// convert to list.
+let (|HeadTail|Empty|) (s: string) =
+    if s |> String.IsNullOrEmpty then
+        Empty
+    else
+        HeadTail(s[0], s[1..])
 
 let sumCalibrationValues (input: string) : int =
     let rec getFirstDigit (s: string) : string =
@@ -47,8 +63,7 @@ let sumCalibrationValuesDigitWords (input: string) : int =
 
                 match digit with
                 | Some d -> digitsMap[d].ToString()
-                | None ->
-                    helper line (index + 1) // recurse
+                | None -> helper line (index + 1) // recurse
 
         helper line 0
 
@@ -64,8 +79,7 @@ let sumCalibrationValuesDigitWords (input: string) : int =
 
                 match digit with
                 | Some d -> digitsMap[d].ToString()
-                | None ->
-                    helper line (index - 1) // recurse
+                | None -> helper line (index - 1) // recurse
 
         helper line (line.Length - 1)
 
