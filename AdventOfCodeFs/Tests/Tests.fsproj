@@ -10,10 +10,12 @@
 
   <ItemGroup>
     <Compile Include="Tests.fs" />
-    <Compile Include="Program.fs" />
-    <Content Include="day1.txt">
+    <Content Include="day1.txt" CopyToOutputDirectory="Always" />
+    <Content Include="day2sample.txt" CopyToOutputDirectory="Always" />
+    <Content Include="day2.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Compile Include="Program.fs" />
   </ItemGroup>
 
   <ItemGroup>

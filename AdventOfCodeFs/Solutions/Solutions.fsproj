@@ -8,9 +8,18 @@
 
   <ItemGroup>
     <Compile Include="Util.fs" />
+    
     <Compile Include="day1.fs" />
     <Content Include="day1.txt" CopyToOutputDirectory="Always"/>
+   
+    <Compile Include="day2.fs" />
+    <Content Include="day2sample.txt" CopyToOutputDirectory="Always"/>
+    
     <Compile Include="Program.fs" />
+    
+    <Content Include="day2.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>
