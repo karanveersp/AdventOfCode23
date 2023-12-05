@@ -39,3 +39,18 @@ let ``Day 2 - part 2`` () =
     let input = File.ReadAllText("inputs/day2.txt")
     let output = day2.sumPowersOfMinCubeQuantities input
     Assert.Equal(71274, output)
+
+
+[<Fact>]
+let ``Day 3 - sample part 1`` () =
+    let input = File.ReadAllText("inputs/day3sample.txt")
+    let output = day3.sumPartNumbers input
+    Assert.Equal(4361, output)
+
+
+[<Fact>]
+let ``Day 3 - part 1`` () =
+    let input = File.ReadAllText("inputs/day3.txt")
+    let output = day3.sumPartNumbers input
+    Assert.Equal(551094, output)
+

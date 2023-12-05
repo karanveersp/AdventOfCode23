@@ -1,7 +1,7 @@
 open System.IO
 open Solutions
 
-let input = File.ReadAllText("inputs/day2.txt")
+let input = File.ReadAllText("inputs/day3.txt")
 
-printfn "%d" (day2.sumPowersOfMinCubeQuantities input)
+printfn "%d" (day3.sumPartNumbers input)
 
