@@ -4,15 +4,22 @@ open Microsoft.FSharp.Core
 
 type Location = int * int
 
-let isDigit (s: string): bool =
+let private isDigit (s: string): bool =
     s |> Char.Parse |> Char.IsDigit
-let isSymbol (s: string): bool =
+let private isSymbol (s: string): bool =
     s <> "." && s |> isDigit |> not
 
-let isEmpty (s: string): bool =
+let private isEmpty (s: string): bool =
     s = "."
 
-let tryLocation (grid: string list list) (loc: int*int): Location option =
+type PartNumber = {
+    value: int
+    gearLocation: Location option
+    neighbours: Location list
+}
+
+// keeps location in grid bounds
+let private tryLocation (grid: string list list) (loc: int*int): Location option =
     let i, j = loc
     match i, j with
     | i, _ when i < 0 || i >= grid.Length -> None
@@ -29,17 +36,16 @@ type Position =
     | BottomLeft
     | BottomRight
 
-let top i j: Location = i-1, j
-let bottom i j: Location = i+1, j
-let left i j: Location = i, j-1
-let right i j: Location = i, j+1
-let topLeft i j: Location = i-1, j-1
-let topRight i j: Location = i-1, j+1
-let botLeft i j: Location = i+1, j-1
-let botRight i j: Location = i+1, j+1
-            
+let private top i j: Location = i-1, j
+let private bottom i j: Location = i+1, j
+let private left i j: Location = i, j-1
+let private right i j: Location = i, j+1
+let private topLeft i j: Location = i-1, j-1
+let private topRight i j: Location = i-1, j+1
+let private botLeft i j: Location = i+1, j-1
+let private botRight i j: Location = i+1, j+1
 
-let tryGetValue (grid: 'a list list) (loc: Location) (neighbours: Location list) (position: Position): 'a option =
+let private tryGetValue (grid: 'a list list) (loc: Location) (neighbours: Location list) (position: Position): 'a option =
     let i, j = loc
     let tryFindNeighbour (neighbourLoc: Location) =
         neighbours
@@ -89,7 +95,7 @@ type Cell = {
         let i, j = location
         [left i j; right i j; top i j; bottom i j; topLeft i j; topRight i j; botLeft i j; botRight i j]
         |> List.choose (tryLocation grid)
-
+   
     static member from (grid: string list list) (i: int) (j: int) (v: string): Cell =
         let neighbours = Cell.getNeighbourLocations grid (i, j)
         let getValueAt = tryGetValue grid (i,j) neighbours
@@ -136,16 +142,22 @@ type Cell = {
             // is symbol
             { Cell.Empty with Value = Some symbol; Location = Some (i, j); IsSymbol = true; Neighbors = neighbours }
 
-let isSymbolInNeighbours (grid: Cell list list) (neighbours: Location list): bool =
+let private isSymbolInNeighbours (grid: Cell list list) (neighbours: Location list): bool =
     neighbours
     |> List.exists (fun loc ->
         let i, j = loc
         (grid[i][j]).Value.Value
         |> isSymbol)
 
-let rec buildCompleteNumberAccumulatingNeighbours (cellGrid: Cell list list) (cell: Cell) (numbers: string) neighbours =
+let private tryFindGearInNeighbours (grid: Cell list list) (neighbours: Location list): Location option =
+    neighbours
+    |> List.tryFind (fun loc ->
+        let i, j = loc
+        (grid[i][j]).Value.Value = "*")
+    
+let rec private buildCompleteNumberAccumulatingNeighbours (cellGrid: Cell list list) (cell: Cell) (numbers: string) neighbours =
     if cell.IsNumberEnd then
-        ((numbers + cell.Value.Value) |> int, List.append neighbours cell.Neighbors)
+        ((numbers + cell.Value.Value) |> int, cell.Neighbors |> List.append neighbours |> List.distinct)
     else
         let rightCell = tryGetValue cellGrid cell.Location.Value cell.Neighbors Position.Right
         match rightCell with
@@ -154,7 +166,7 @@ let rec buildCompleteNumberAccumulatingNeighbours (cellGrid: Cell list list) (ce
         | Some rc ->
             buildCompleteNumberAccumulatingNeighbours cellGrid rc (numbers+cell.Value.Value) (List.append neighbours cell.Neighbors)
             
-let printGrid (cellGrid: Cell list list) =
+let private printGrid (cellGrid: Cell list list) =
     cellGrid
     |> List.iter (fun row ->
          row |> List.iter (fun cell ->
@@ -162,7 +174,8 @@ let printGrid (cellGrid: Cell list list) =
              )
          printfn ""
          )
-let sumPartNumbers (input: string): int =
+
+let private cellGridFromString(input: string): Cell list list =
     let grid: string list list =
         Util.stringToLines input
         |> List.map (fun line -> line.ToCharArray() |> Array.toList |> List.map string)
@@ -177,7 +190,12 @@ let sumPartNumbers (input: string): int =
              cellRow <- List.append cellRow [Cell.from grid i j v] 
              )
          cellGrid <- List.append cellGrid [cellRow])
+
+    cellGrid
     
+let sumPartNumbers (input: string): int =
+    let cellGrid = cellGridFromString input
+
     let mutable partNumbers: int list = []
     
     cellGrid
@@ -197,3 +215,39 @@ let sumPartNumbers (input: string): int =
         )
      
     List.sum partNumbers
+
+let sumGearRatios (input: string): int =
+    let cellGrid = cellGridFromString input
+    
+    let mutable partNumbers: PartNumber list = []
+    
+    // collect all part numbers with possible gear neighbour
+    cellGrid
+    |> List.iter (fun row ->
+        row |> List.iter (fun cell ->
+            
+            let numNeighbourOpt =
+                if cell.IsNumberStart && cell.IsNumberEnd then
+                    // single digit number
+                    Some(cell.Value.Value |> int, cell.Neighbors)
+                elif cell.IsNumberStart then
+                    Some(buildCompleteNumberAccumulatingNeighbours cellGrid cell "" [])
+                else
+                    None
+            
+            match numNeighbourOpt with
+            | Some(number, neighbours) ->
+                let partNumber: PartNumber =
+                    {value = number; neighbours = neighbours; gearLocation = tryFindGearInNeighbours cellGrid neighbours }
+                partNumbers <- List.append partNumbers [partNumber]
+            | None ->
+                ()
+            )
+        )
+    
+    partNumbers
+    |> List.filter (fun pn -> pn.gearLocation.IsSome)
+    |> List.groupBy (fun pn -> pn.gearLocation.Value)
+    |> List.filter (fun (_, nums) -> nums.Length = 2)
+    |> List.map (fun (_, nums) -> nums[0].value * nums[1].value)
+    |> List.sum

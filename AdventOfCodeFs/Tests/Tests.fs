@@ -54,3 +54,15 @@ let ``Day 3 - part 1`` () =
     let output = day3.sumPartNumbers input
     Assert.Equal(551094, output)
 
+
+[<Fact>]
+let ``Day 3 - sample part 2`` () =
+    let input = File.ReadAllText("inputs/day3sample.txt")
+    let output = day3.sumGearRatios input
+    Assert.Equal(467835, output)
+
+[<Fact>]
+let ``Day 3 - part 2`` () =
+    let input = File.ReadAllText("inputs/day3.txt")
+    let output = day3.sumGearRatios input
+    Assert.Equal(80179647, output)
