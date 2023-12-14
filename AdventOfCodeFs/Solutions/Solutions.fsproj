@@ -29,9 +29,17 @@
     
     <Content Include="inputs\day3sample.txt" CopyToOutputDirectory="Always"/>
     
+    <Content Include="inputs\day4sample.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    
     <Content Include="inputs\day3.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    
+    <Content Include="inputs\day4.txt" CopyToOutputDirectory="Always"/>
+
+    <Compile Include="day4.fs" />
     
     <Compile Include="Program.fs" />
 

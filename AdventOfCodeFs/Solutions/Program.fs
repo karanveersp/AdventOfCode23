@@ -1,7 +1,8 @@
-open System.IO
 open Solutions
 
-let input = File.ReadAllText("inputs/day3.txt")
+open System.IO
 
-printfn "%d" (day3.sumPartNumbers input)
+let input = File.ReadAllText("inputs/day4sample.txt")
+
+printfn "%d" (day4.calculateScratchCards input)
 

@@ -52,7 +52,7 @@ let sumPossibleGameIds (input: string) (maxRed: int) (maxGreen: int) (maxBlue: i
 
     let isPossibleGame (g: Game) : bool = g.Sets |> List.forall isPossibleSet
 
-    stringToLines input
+    toLines input
     |> List.map Game.fromString
     |> List.filter isPossibleGame
     |> List.sumBy (fun g -> g.Id)
@@ -75,7 +75,7 @@ let sumPowersOfMinCubeQuantities (input: string) : int =
         |> List.map (minRequiredQtyInSets g.Sets)
         |> List.reduce (*)
 
-    stringToLines input
+    toLines input
     |> List.map Game.fromString
     |> List.map powerOfMinRequiredCubes
     |> List.sum

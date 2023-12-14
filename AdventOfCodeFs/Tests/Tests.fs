@@ -66,3 +66,30 @@ let ``Day 3 - part 2`` () =
     let input = File.ReadAllText("inputs/day3.txt")
     let output = day3.sumGearRatios input
     Assert.Equal(80179647, output)
+
+
+[<Fact>]
+let ``Day 4 - sample part 1`` () =
+    let input = File.ReadAllText("inputs/day4sample.txt")
+    let output = day4.calculatePoints input
+    Assert.Equal(13, output)
+ 
+
+[<Fact>]
+let ``Day 4 - part 1`` () =
+    let input = File.ReadAllText("inputs/day4.txt")
+    let output = day4.calculatePoints input
+    Assert.Equal(15268, output)
+
+
+[<Fact>]
+let ``Day 4 - sample part 2`` () =
+    let input = File.ReadAllText("inputs/day4sample.txt")
+    let output = day4.calculateScratchCards input
+    Assert.Equal(30, output)
+
+[<Fact>]
+let ``Day 4 - part 2`` () =
+    let input = File.ReadAllText("inputs/day4.txt")
+    let output = day4.calculateScratchCards input
+    Assert.Equal(6283755, output)

@@ -31,7 +31,7 @@ let sumCalibrationValues (input: string) : int =
                 getFirstDigit tail
 
     input
-    |> stringToLines
+    |> toLines
     |> List.map (fun line ->
         let fst = getFirstDigit line
         let snd = getFirstDigit (line.Reverse())
@@ -84,7 +84,7 @@ let sumCalibrationValuesDigitWords (input: string) : int =
         helper line (line.Length - 1)
 
     input
-    |> stringToLines
+    |> toLines
     |> List.map (fun line ->
         let fst = findFirstDigitWord line
         let snd = findLastDigitWord line

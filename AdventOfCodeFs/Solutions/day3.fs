@@ -177,7 +177,7 @@ let private printGrid (cellGrid: Cell list list) =
 
 let private cellGridFromString(input: string): Cell list list =
     let grid: string list list =
-        Util.stringToLines input
+        Util.toLines input
         |> List.map (fun line -> line.ToCharArray() |> Array.toList |> List.map string)
     let mutable cellGrid: Cell list list = []
     
