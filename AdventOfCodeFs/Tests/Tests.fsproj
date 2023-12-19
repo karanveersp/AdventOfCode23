@@ -9,8 +9,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Solutions\Solutions.fsproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Include="Tests.fs" />
     <Compile Include="Program.fs" />
+    
     <Content Include="inputs\day1.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -30,6 +35,12 @@
     <Content Include="inputs\day4sample.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="inputs\day5sample.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="inputs\day5.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
@@ -45,8 +56,5 @@
     </PackageReference>
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Solutions\Solutions.fsproj" />
-  </ItemGroup>
 
 </Project>

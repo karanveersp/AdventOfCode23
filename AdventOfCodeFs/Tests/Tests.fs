@@ -93,3 +93,28 @@ let ``Day 4 - part 2`` () =
     let input = File.ReadAllText("inputs/day4.txt")
     let output = day4.calculateScratchCards input
     Assert.Equal(6283755, output)
+
+[<Fact>]
+let ``Day 5 - sample part 1`` () =
+    let input = File.ReadAllText("inputs/day5sample.txt")
+    let output = day5.lowestLocationNumber input
+    Assert.Equal(35L, output)
+
+[<Fact>]
+let ``Day 5 - part 1`` () =
+    let input = File.ReadAllText("inputs/day5.txt")
+    let output = day5.lowestLocationNumber input
+    Assert.Equal(910845529L, output)
+
+
+[<Fact>]
+let ``Day 5 - sample part 2`` () =
+    let input = File.ReadAllText("inputs/day5sample.txt")
+    let output = day5.lowestLocationNumberForSeedRanges input
+    Assert.Equal(46L, output)
+
+[<Fact>]
+let ``Day 5 - part 2`` () =
+    let input = File.ReadAllText("inputs/day5.txt")
+    let output = day5.lowestLocationNumberForSeedRanges input
+    Assert.Equal(77435348L, output)
