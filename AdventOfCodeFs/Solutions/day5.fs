@@ -228,15 +228,18 @@ let parseSeedRanges (input: string) : NumRange seq =
     }
 
 let seedInRange (seed: int64) (ranges: NumRange list): bool =
-    let rec check(ranges: NumRange list) =
-        match ranges with
-        | [] -> false
-        | range :: remaining ->
-            if seed >= range.first && seed <= range.last then
-                true
-            else
-                check remaining
-    check ranges
+    ranges
+    |> List.exists (fun range -> seed >= range.first && seed <= range.last)
+    //
+    // let rec check(ranges: NumRange list) =
+    //     match ranges with
+    //     | [] -> false
+    //     | range :: remaining ->
+    //         if seed >= range.first && seed <= range.last then
+    //             true
+    //         else
+    //             check remaining
+    // check ranges
 
 let lowestLocationNumberForSeedRangesParallel (input: string) : int64 =
     let seeds = parseSeedRanges input
@@ -291,6 +294,8 @@ let lowestLocationNumberForSeedRangesParallel (input: string) : int64 =
 /// locations correspond to a seed which is in any of the seed ranges.
 /// The first location for which the seed is present in the ranges
 /// is the answer.
+/// Inspired by:
+/// https://github.com/werner77/AdventOfCode/blob/master/src/main/kotlin/com/behindmedia/adventofcode/year2023/day5/Day5.kt
 let lowestLocationNumberForSeedRanges (input: string) : int64 =
     let seeds = parseSeedRanges input |> Seq.toList
     
@@ -323,3 +328,43 @@ let lowestLocationNumberForSeedRanges (input: string) : int64 =
         else
             loc <- loc + 1L
     result
+
+/// Similar logic as above but with async operations.
+let lowestLocationNumberForSeedRangesAsync (input: string) : int64 =
+    let seeds = parseSeedRanges input |> Seq.toList
+    
+    let soilToSeed = parseXToYReverse "seed" "soil" input
+    let fertToSoil = parseXToYReverse "soil" "fertilizer" input
+    let waterToFert = parseXToYReverse "fertilizer" "water" input
+    let lightToWater = parseXToYReverse "water" "light" input
+    let tempToLight = parseXToYReverse "light" "temperature" input
+    let humToTemp = parseXToYReverse "temperature" "humidity" input
+    let locToHum = parseXToYReverse "humidity" "location" input
+
+    let locToSeed: int64 -> int64 =
+        locToHum.get
+        >> humToTemp.get
+        >> tempToLight.get
+        >> lightToWater.get
+        >> waterToFert.get
+        >> fertToSoil.get
+        >> soilToSeed.get
+    
+    let loc = ref 0L
+    let processorCount = System.Environment.ProcessorCount
+    
+    let tasks =
+        [ for _ in 1 .. processorCount ->
+            async {
+                let mutable current = 0L
+                let mutable found = false
+                while not found do
+                    current <- Interlocked.Increment(loc) - 1L
+                    let seed = locToSeed current
+                    if seedInRange seed seeds then
+                        found <- true
+                return current
+            } ]
+    Async.Parallel(tasks)
+    |> Async.RunSynchronously
+    |> Array.min // all while loops have to conclude with some location value, and we take the min of those values.
